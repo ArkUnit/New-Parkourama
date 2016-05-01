@@ -8,7 +8,7 @@ window = pygame.display.set_mode((800,500))
 clock = pygame.time.Clock()
 
 fond_color = pygame.Color(95,205,228)
-
+#lol
 obstacle_1 = pygame.image.load("C:\\Users\\michael\\Pictures\\obstacle1.png")
 obstacle_2 = pygame.image.load("C:\\Users\\michael\\Pictures\\obstacle2.png")
 
