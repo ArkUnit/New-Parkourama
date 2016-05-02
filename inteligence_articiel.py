@@ -155,6 +155,14 @@ while continuer:
 				if Map.get_at((joueur.rect.x+16,joueur.rect.y+36)) == jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+33)) == jaune:
 					saut = True
 					cpt_saut = 0
+					joueur.continuer_animation = False
+					joueur.direction_droite = False
+					joueur.direction_gauche = False
+					if direction_balle == "gauche":
+						joueur.image = personnage_gauche1
+					if direction_balle == "droite":
+						joueur.image = personnage_droite1
+					
 		
 		if event.type == KEYUP:
 			if event.key == K_RIGHT:
@@ -173,9 +181,18 @@ while continuer:
 	if saut:
 		cpt_saut += 1
 		joueur.rect.y -= 5
+		joueur.continuer_animation = False
+		joueur.direction_droite = False
+		joueur.direction_gauche = False
 		if cpt_saut > 7:
 			saut = False
 			cpt_saut = 0
+			if direction_balle == "gauche":
+				joueur.direction_gauche = True
+				joueur.direction_droite = False
+			if direction_balle == "droite":
+				joueur.direction_droite = True
+				joueur.direction_gauche = False
 	
 	
 	if Map.get_at((joueur.rect.x+16,joueur.rect.y+33)) != jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+33)) != jaune:
