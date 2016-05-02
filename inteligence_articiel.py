@@ -5,10 +5,11 @@ import sys
 pygame.init()
 
 window = pygame.display.set_mode((800,500))
+Map = pygame.Surface((800,500))
 clock = pygame.time.Clock()
 
 fond_color = pygame.Color(95,205,228)
-#lol
+
 obstacle_1 = pygame.image.load("C:\\Users\\michael\\Pictures\\obstacle1.png")
 obstacle_2 = pygame.image.load("C:\\Users\\michael\\Pictures\\obstacle2.png")
 
@@ -21,6 +22,8 @@ personnage_gauche_arret = pygame.image.load("C:\\Users\\michael\\Pictures\\perso
 personnage_gauche1 = pygame.image.load("C:\\Users\\michael\\Pictures\\perso_pnj_gauche1.png")
 personnage_gauche2 = pygame.image.load("C:\\Users\\michael\\Pictures\\perso_pnj_gauche2.png")
 personnage_gauche3 = pygame.image.load("C:\\Users\\michael\\Pictures\\perso_pnj_gauche3.png")
+
+niveau_test = pygame.image.load("C:\\Users\\michael\\Pictures\\niveau_de_test.png")
 
 continuer = True
 
@@ -70,20 +73,20 @@ class Joueur (pygame.sprite.Sprite):
 		if self.continuer_animation:
 			if self.direction_droite:
 				self.cpt += 1
-				if self.cpt == 5:
+				if self.cpt == 3:
 					self.image = personnage_droite1
-				if self.cpt == 10:
+				if self.cpt == 6:
 					self.image = personnage_droite2
-				if self.cpt == 15:
+				if self.cpt == 12:
 					self.image = personnage_droite3
 					self.cpt = 0
 			if self.direction_gauche:
 				self.cpt += 1
-				if self.cpt == 5:
+				if self.cpt == 3:
 					self.image = personnage_gauche1
-				if self.cpt == 10:
+				if self.cpt == 6:
 					self.image = personnage_gauche2
-				if self.cpt == 15:
+				if self.cpt == 12:
 					self.image = personnage_gauche3
 					self.cpt = 0
 		
@@ -91,13 +94,28 @@ class Joueur (pygame.sprite.Sprite):
 joueur = Joueur([])
 grp_j = pygame.sprite.Group([joueur])
 joueur.image = personnage_droite_arret
-joueur.rect = pygame.Rect(100,315,joueur.image.get_width(),joueur.image.get_height())
-joueur.rect.x = 50
-joueur.rect.y = 350
+joueur.rect = pygame.Rect(400,320,joueur.image.get_width(),joueur.image.get_height())
+joueur.rect.x = 400
+joueur.rect.y = 407
 
 x_change = 0
 y_change = 0
 pygame.sprite.Group([joueur])
+
+x_pied_j = joueur.rect.x
+y_pied_j = joueur.rect.y
+
+tire = False
+continuer_tire = True
+jaune = pygame.Color(255,255,0)
+x_balle = joueur.rect.x
+y_balle = joueur.rect.y
+direction_balle = "droite"
+
+
+saut = False
+cpt_saut = 0
+bloc_saut = False
 
 while continuer:
 	for event in pygame.event.get():
@@ -110,12 +128,33 @@ while continuer:
 				joueur.continuer_animation = True
 				joueur.direction_droite = True
 				joueur.direction_gauche = False
-				x_change = 1
+				if direction_balle == "gauche":
+					continuer_tire = False
+					tire = False
+					x_balle = joueur.rect.x
+				x_change = 2
+				direction_balle = "droite"
 			if event.key == K_LEFT:
 				joueur.continuer_animation = True
 				joueur.direction_gauche = True
 				joueur.direction_droite = False
-				x_change = -1
+				if direction_balle == "droite":
+					continuer_tire = False
+					tire = False
+					x_balle = joueur.rect.x
+				direction_balle = "gauche"
+				x_change = -2
+			if event.key == K_n:
+				if continuer_tire == False:
+					tire = True
+					continuer_tire = True
+					x_balle = joueur.rect.x
+					y_balle = joueur.rect.y
+			
+			if event.key == K_UP:
+				if Map.get_at((joueur.rect.x+16,joueur.rect.y+36)) == jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+33)) == jaune:
+					saut = True
+					cpt_saut = 0
 		
 		if event.type == KEYUP:
 			if event.key == K_RIGHT:
@@ -130,18 +169,73 @@ while continuer:
 				x_change = 0
 				
 	
+	
+	if saut:
+		cpt_saut += 1
+		joueur.rect.y -= 5
+		if cpt_saut > 7:
+			saut = False
+			cpt_saut = 0
+	
+	
+	if Map.get_at((joueur.rect.x+16,joueur.rect.y+33)) != jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+33)) != jaune:
+		joueur.rect.y += 2
+	
+	if saut == False:	
+		if Map.get_at((joueur.rect.x+16,joueur.rect.y+33)) == jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+33)) == jaune:
+			joueur.rect.y -= 2
+			y_change = 0
+		
+	
 	joueur.rect.x += x_change
 	joueur.rect.y += y_change
 	
-	if pygame.sprite.groupcollide(grp_j,grp_ob1,False,False):
-		print("sa marche ")
+	x_pied_j = joueur.rect.x
+	y_pied_j = joueur.rect.y
+	
+	if continuer_tire:
+		if direction_balle == "droite":
+			x_balle += 10
+		if direction_balle == "gauche":
+			x_balle -= 10
+	
+	
+	#~ if pygame.sprite.groupcollide(grp_j,grp_ob1,False,False):
+		#~ print("sa marche ")
+	
+	if Map.get_at((x_pied_j+4,y_pied_j+5)) == jaune or Map.get_at((x_pied_j+4,y_pied_j+10)) == jaune or Map.get_at((x_pied_j+8,y_pied_j+20)) == jaune:
+		x_change = 0
+		joueur.rect.x += 3
+		
+	if Map.get_at((x_pied_j+28,y_pied_j+5)) == jaune or Map.get_at((x_pied_j+28,y_pied_j+10)) == jaune or Map.get_at((x_pied_j+22,y_pied_j+20)) == jaune:
+		x_change = 0
+		joueur.rect.x -= 3
+		
+	if joueur.rect.y > 470:
+		y_change = 0
+		joueur.rect.y -= 3
+	
+	if joueur.rect.x < 38:
+		x_change = 0
+		joueur.rect.x += 3
+	
+	if joueur.rect.x > 750:
+		x_change = 0
+		joueur.rect.x -= 3
 	
 	window.fill(fond_color)
-	grp_ob1.draw(window)
-	grp_ob2.draw(window)
+	window.blit(niveau_test,(0,0))
+	pygame.draw.rect(Map, jaune,(0,443,210,63))
+	pygame.draw.rect(Map, jaune,(340,443,590,63))
+	pygame.draw.rect(Map, jaune,(210,450,130,20))
+	#~ pygame.draw.rect(window, jaune,(150,400,10,100))
 	grp_j.draw(window)
+	
+	if tire:
+		pygame.draw.rect(window, jaune,( x_balle, y_balle , 10 ,5))
+	
 	bounce_obstacle1.update()
 	bounce_obstacle2.update()
 	joueur.update()
 	pygame.display.update()
-	clock.tick(30)
+	
