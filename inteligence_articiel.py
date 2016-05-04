@@ -23,7 +23,7 @@ personnage_gauche1 = pygame.image.load("C:\\Users\\michael\\Pictures\\perso_pnj_
 personnage_gauche2 = pygame.image.load("C:\\Users\\michael\\Pictures\\perso_pnj_gauche2.png")
 personnage_gauche3 = pygame.image.load("C:\\Users\\michael\\Pictures\\perso_pnj_gauche3.png")
 
-niveau_test = pygame.image.load("C:\\Users\\michael\\Pictures\\niveau_de_test.png")
+niveau_test = pygame.image.load("C:\\Users\\michael\\Pictures\\niveau_de_test(test).png")
 
 continuer = True
 
@@ -62,6 +62,7 @@ class Joueur (pygame.sprite.Sprite):
 	direction_droite = True
 	direction_gauche = False
 	continuer_animation = False
+	sauv_animation = False
 	
 	cpt = 0
 	
@@ -125,6 +126,7 @@ while continuer:
 		
 		if event.type == KEYDOWN:
 			if event.key == K_RIGHT:
+				joueur.sauv_animation = True
 				joueur.continuer_animation = True
 				joueur.direction_droite = True
 				joueur.direction_gauche = False
@@ -135,6 +137,7 @@ while continuer:
 				x_change = 2
 				direction_balle = "droite"
 			if event.key == K_LEFT:
+				joueur.sauv_animation = True
 				joueur.continuer_animation = True
 				joueur.direction_gauche = True
 				joueur.direction_droite = False
@@ -155,6 +158,8 @@ while continuer:
 				if Map.get_at((joueur.rect.x+16,joueur.rect.y+36)) == jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+33)) == jaune:
 					saut = True
 					cpt_saut = 0
+					if joueur.continuer_animation:
+						joueur.sauv_animation = True
 					joueur.continuer_animation = False
 					joueur.direction_droite = False
 					joueur.direction_gauche = False
@@ -166,11 +171,13 @@ while continuer:
 		
 		if event.type == KEYUP:
 			if event.key == K_RIGHT:
+				joueur.sauv_animation = False
 				joueur.image = personnage_droite_arret
 				joueur.continuer_animation = False
 				joueur.cpt = 0
 				x_change = 0
 			if event.key == K_LEFT:
+				joueur.sauv_animation = False
 				joueur.image = personnage_gauche_arret
 				joueur.continuer_animation = False
 				joueur.cpt = 0
@@ -198,11 +205,30 @@ while continuer:
 	if Map.get_at((joueur.rect.x+16,joueur.rect.y+33)) != jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+33)) != jaune:
 		joueur.rect.y += 2
 	
-	if saut == False:	
+	
+	
+	
+	if saut == False:
 		if Map.get_at((joueur.rect.x+16,joueur.rect.y+33)) == jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+33)) == jaune:
-			joueur.rect.y -= 2
-			y_change = 0
+			if joueur.sauv_animation:
+				joueur.continuer_animation = True
+				joueur.sauv_animation = False
+			else:
+				if joueur.continuer_animation == False:
+					if direction_balle == "gauche":
+						joueur.direction_gauche = True
+						joueur.direction_droite = False
+						joueur.image = personnage_gauche_arret
+					if direction_balle == "droite":
+						joueur.direction_droite = True
+						joueur.direction_gauche = False
+						joueur.image = personnage_droite_arret
+			
 		
+	if saut == False:
+		if Map.get_at((joueur.rect.x+16,joueur.rect.y+33)) == jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+33)) == jaune:
+			y_change = 0
+			joueur.rect.y -= 2
 	
 	joueur.rect.x += x_change
 	joueur.rect.y += y_change
@@ -255,4 +281,5 @@ while continuer:
 	bounce_obstacle2.update()
 	joueur.update()
 	pygame.display.update()
+	clock.tick(30)
 	
