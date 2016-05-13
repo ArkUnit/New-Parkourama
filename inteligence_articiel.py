@@ -27,6 +27,21 @@ niveau_test = pygame.image.load("C:\\Users\\michael\\Pictures\\niveau_de_test(te
 
 continuer = True
 
+def sol_deco():
+	tente = pygame.image.load("C:\\Users\\michael\\Pictures\\tente.png")
+	fleur1 = pygame.image.load("C:\\Users\\michael\\Pictures\\fleur1.png")
+	fleur2 = pygame.image.load("C:\\Users\\michael\\Pictures\\fleur2.png")
+	fleur3 = pygame.image.load("C:\\Users\\michael\\Pictures\\fleur3.png")
+	pont = pygame.image.load("C:\\Users\\michael\\Pictures\\pont_en_bois.png")
+	
+	
+	window.blit(tente,(385,375))
+	window.blit(fleur1,(710,425))
+	window.blit(fleur2,(600,430))
+	window.blit(fleur3,(640,420))
+	window.blit(fleur3,(540,420))
+	window.blit(pont,(180,400))
+
 class Obstacle1 (pygame.sprite.Sprite):
 	
 	def __init__ (self,group):
@@ -74,20 +89,20 @@ class Joueur (pygame.sprite.Sprite):
 		if self.continuer_animation:
 			if self.direction_droite:
 				self.cpt += 1
-				if self.cpt == 3:
+				if self.cpt == 5:
 					self.image = personnage_droite1
-				if self.cpt == 6:
+				if self.cpt == 10:
 					self.image = personnage_droite2
-				if self.cpt == 12:
+				if self.cpt == 15:
 					self.image = personnage_droite3
 					self.cpt = 0
 			if self.direction_gauche:
 				self.cpt += 1
-				if self.cpt == 3:
+				if self.cpt == 5:
 					self.image = personnage_gauche1
-				if self.cpt == 6:
+				if self.cpt == 10:
 					self.image = personnage_gauche2
-				if self.cpt == 12:
+				if self.cpt == 15:
 					self.image = personnage_gauche3
 					self.cpt = 0
 		
@@ -96,8 +111,8 @@ joueur = Joueur([])
 grp_j = pygame.sprite.Group([joueur])
 joueur.image = personnage_droite_arret
 joueur.rect = pygame.Rect(400,320,joueur.image.get_width(),joueur.image.get_height())
-joueur.rect.x = 400
-joueur.rect.y = 407
+joueur.rect.x = 500
+joueur.rect.y = 100
 
 x_change = 0
 y_change = 0
@@ -108,11 +123,19 @@ y_pied_j = joueur.rect.y
 
 tire = False
 continuer_tire = True
+
+
 jaune = pygame.Color(255,255,0)
+bleu = pygame.Color(0,0,255)
+
+
 x_balle = joueur.rect.x
 y_balle = joueur.rect.y
 direction_balle = "droite"
 
+cpt_phy = 0
+continuer_phy = True
+sauv_cpt_phy = 0
 
 saut = False
 cpt_saut = 0
@@ -126,6 +149,10 @@ while continuer:
 		
 		if event.type == KEYDOWN:
 			if event.key == K_RIGHT:
+				direction_balle = "droite"
+				if Map.get_at((joueur.rect.x+16,joueur.rect.y+33)) != jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+33)) != jaune:
+					if direction_balle == "droite":
+						joueur.image = personnage_droite1
 				joueur.sauv_animation = True
 				joueur.continuer_animation = True
 				joueur.direction_droite = True
@@ -135,8 +162,13 @@ while continuer:
 					tire = False
 					x_balle = joueur.rect.x
 				x_change = 2
-				direction_balle = "droite"
+			
+			
 			if event.key == K_LEFT:
+				direction_balle = "gauche"
+				if Map.get_at((joueur.rect.x+16,joueur.rect.y+33)) != jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+33)) != jaune:
+					if direction_balle == "gauche":
+						joueur.image = personnage_gauche1
 				joueur.sauv_animation = True
 				joueur.continuer_animation = True
 				joueur.direction_gauche = True
@@ -145,8 +177,9 @@ while continuer:
 					continuer_tire = False
 					tire = False
 					x_balle = joueur.rect.x
-				direction_balle = "gauche"
 				x_change = -2
+			
+			
 			if event.key == K_n:
 				if continuer_tire == False:
 					tire = True
@@ -167,31 +200,56 @@ while continuer:
 						joueur.image = personnage_gauche1
 					if direction_balle == "droite":
 						joueur.image = personnage_droite1
+			
+			if event.key == K_ESCAPE:
+				pygame.quit()
+				sys.exit()
 					
 		
 		if event.type == KEYUP:
 			if event.key == K_RIGHT:
 				joueur.sauv_animation = False
-				joueur.image = personnage_droite_arret
+				if Map.get_at((joueur.rect.x+16,joueur.rect.y+33)) == jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+33)) == jaune:
+					joueur.image = personnage_droite_arret
+				if Map.get_at((joueur.rect.x+16,joueur.rect.y+33)) != jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+33)) != jaune:
+					if direction_balle == "droite":
+						joueur.image = personnage_droite1
 				joueur.continuer_animation = False
 				joueur.cpt = 0
 				x_change = 0
 			if event.key == K_LEFT:
 				joueur.sauv_animation = False
-				joueur.image = personnage_gauche_arret
+				if Map.get_at((joueur.rect.x+16,joueur.rect.y+33)) == jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+33)) == jaune:
+					joueur.image = personnage_gauche_arret
+				if Map.get_at((joueur.rect.x+16,joueur.rect.y+33)) != jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+33)) != jaune:
+					if direction_balle == "gauche":
+						joueur.image = personnage_gauche1
 				joueur.continuer_animation = False
 				joueur.cpt = 0
 				x_change = 0
 				
 	
 	
+	
+	if saut == False:
+		if Map.get_at((joueur.rect.x+16,joueur.rect.y+35)) != jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+35)) != jaune:
+			cpt_phy += 1
+			if cpt_phy > 7 and cpt_phy < 11:
+				y_change += 1
+			if cpt_phy > 10:
+				y_change += 1
+	
 	if saut:
 		cpt_saut += 1
-		joueur.rect.y -= 5
+		cpt_phy = 0
 		joueur.continuer_animation = False
 		joueur.direction_droite = False
 		joueur.direction_gauche = False
-		if cpt_saut > 7:
+		if cpt_saut > 0 and cpt_saut < 2:
+			y_change = -5
+		if cpt_saut > 2 and cpt_saut < 4:
+			y_change = -3
+		if cpt_saut > 4 and cpt_saut < 6:
 			saut = False
 			cpt_saut = 0
 			if direction_balle == "gauche":
@@ -200,11 +258,8 @@ while continuer:
 			if direction_balle == "droite":
 				joueur.direction_droite = True
 				joueur.direction_gauche = False
-	
-	
-	if Map.get_at((joueur.rect.x+16,joueur.rect.y+33)) != jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+33)) != jaune:
-		joueur.rect.y += 2
-	
+
+
 	
 	
 	
@@ -229,6 +284,7 @@ while continuer:
 		if Map.get_at((joueur.rect.x+16,joueur.rect.y+33)) == jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+33)) == jaune:
 			y_change = 0
 			joueur.rect.y -= 2
+			cpt_phy = 0
 	
 	joueur.rect.x += x_change
 	joueur.rect.y += y_change
@@ -271,8 +327,10 @@ while continuer:
 	pygame.draw.rect(Map, jaune,(0,443,210,63))
 	pygame.draw.rect(Map, jaune,(340,443,590,63))
 	pygame.draw.rect(Map, jaune,(210,450,130,20))
-	#~ pygame.draw.rect(window, jaune,(150,400,10,100))
+	#~ pygame.draw.rect(window, bleu,(538,150,60,290))
+	#~ pygame.draw.rect(Map, jaune,(150,425,10,100))
 	grp_j.draw(window)
+	sol_deco()
 	
 	if tire:
 		pygame.draw.rect(window, jaune,( x_balle, y_balle , 10 ,5))
@@ -281,5 +339,6 @@ while continuer:
 	bounce_obstacle2.update()
 	joueur.update()
 	pygame.display.update()
-	clock.tick(30)
+	clock.tick(40)
 	
+
