@@ -26,6 +26,92 @@ personnage_gauche3 = pygame.image.load("C:\\Users\\michael\\Pictures\\perso_pnj_
 niveau_test = pygame.image.load("C:\\Users\\michael\\Pictures\\niveau_de_test(test).png")
 
 continuer = True
+continuer_interface = True
+
+def interface():
+	global continuer_interface
+	global window
+	fond_interface = pygame.image.load("C:\\Users\\michael\\Pictures\\interface_de_niveau_test.png")
+	boutton_quitter = pygame.image.load("C:\\Users\\michael\\Pictures\\boutton_quitter.png")
+	boutton_quitter2 = pygame.image.load("C:\\Users\\michael\\Pictures\\boutton_quitter.png")
+	boutton_quitter_select = pygame.image.load("C:\\Users\\michael\\Pictures\\boutton_quitter_select.png")
+	boutton_quitter_apuyer = pygame.image.load("C:\\Users\\michael\\Pictures\\boutton_quitter_apuyer.png")
+	
+	boutton_play = pygame.image.load("C:\\Users\\michael\\Pictures\\boutton_play.png")
+	boutton_play2 = pygame.image.load("C:\\Users\\michael\\Pictures\\boutton_play.png")
+	boutton_play_apuyer = pygame.image.load("C:\\Users\\michael\\Pictures\\boutton_play_apuyer.png")
+	boutton_play_select = pygame.image.load("C:\\Users\\michael\\Pictures\\boutton_play_select.png")
+	
+	bloc_select_play = False
+	bloc_select_quitter = False
+	
+	def button_play(x,y):
+		if x < 433 and x > 295:
+			if y < 300 and y > 248:
+				return True
+		return False
+	
+	def button_play_select(x,y):
+		if x < 433 and x > 295:
+			if y < 300 and y > 248:
+				return True
+		return False
+	
+	def button_quitter(x,y):
+		if x < 433 and x > 295:
+			if y < 400 and y > 348:
+				return True
+		return False
+	
+	def button_quitter_select(x,y):
+		if x < 433 and x > 295:
+			if y < 400 and y > 348:
+				return True
+		return False
+	
+	while continuer_interface:
+		for event in pygame.event.get():
+			if event.type == QUIT:
+				pygame.quit()
+				sys.exit()
+			elif event.type == MOUSEBUTTONDOWN:
+				if event.button == 1:
+					x,y = pygame.mouse.get_pos()
+					
+					if button_play(x,y):
+						continuer_interface = False
+					
+					if button_quitter(x,y):
+						pygame.quit()
+						sys.exit()
+			
+			elif event.type == MOUSEMOTION:
+				
+				x,y = pygame.mouse.get_pos()
+				
+				if button_play_select(x,y):
+					if bloc_select_play == False:
+						boutton_play = boutton_play_select
+				else:
+					if bloc_select_play == False:
+						boutton_play = boutton_play2
+						
+				if button_quitter_select(x,y):
+					if bloc_select_quitter == False:
+						boutton_quitter = boutton_quitter_select
+				else:
+					if bloc_select_quitter == False:
+						boutton_quitter = boutton_quitter2
+				
+		
+		window.blit(fond_interface,(0,0))
+		window.blit(boutton_play,(300,250))
+		window.blit(boutton_quitter,(300,350))
+		pygame.display.update()
+			
+
+interface()
+	
 
 def sol_deco():
 	tente = pygame.image.load("C:\\Users\\michael\\Pictures\\tente.png")
@@ -150,7 +236,7 @@ while continuer:
 		if event.type == KEYDOWN:
 			if event.key == K_RIGHT:
 				direction_balle = "droite"
-				if Map.get_at((joueur.rect.x+16,joueur.rect.y+33)) != jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+33)) != jaune:
+				if Map.get_at((joueur.rect.x+16,joueur.rect.y+35)) != jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+35)) != jaune:
 					if direction_balle == "droite":
 						joueur.image = personnage_droite1
 				joueur.sauv_animation = True
@@ -166,7 +252,7 @@ while continuer:
 			
 			if event.key == K_LEFT:
 				direction_balle = "gauche"
-				if Map.get_at((joueur.rect.x+16,joueur.rect.y+33)) != jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+33)) != jaune:
+				if Map.get_at((joueur.rect.x+16,joueur.rect.y+35)) != jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+35)) != jaune:
 					if direction_balle == "gauche":
 						joueur.image = personnage_gauche1
 				joueur.sauv_animation = True
@@ -211,7 +297,7 @@ while continuer:
 				joueur.sauv_animation = False
 				if Map.get_at((joueur.rect.x+16,joueur.rect.y+33)) == jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+33)) == jaune:
 					joueur.image = personnage_droite_arret
-				if Map.get_at((joueur.rect.x+16,joueur.rect.y+33)) != jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+33)) != jaune:
+				if Map.get_at((joueur.rect.x+16,joueur.rect.y+35)) != jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+35)) != jaune:
 					if direction_balle == "droite":
 						joueur.image = personnage_droite1
 				joueur.continuer_animation = False
@@ -221,7 +307,7 @@ while continuer:
 				joueur.sauv_animation = False
 				if Map.get_at((joueur.rect.x+16,joueur.rect.y+33)) == jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+33)) == jaune:
 					joueur.image = personnage_gauche_arret
-				if Map.get_at((joueur.rect.x+16,joueur.rect.y+33)) != jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+33)) != jaune:
+				if Map.get_at((joueur.rect.x+16,joueur.rect.y+35)) != jaune or Map.get_at((joueur.rect.x+11,joueur.rect.y+35)) != jaune:
 					if direction_balle == "gauche":
 						joueur.image = personnage_gauche1
 				joueur.continuer_animation = False
@@ -339,6 +425,6 @@ while continuer:
 	bounce_obstacle2.update()
 	joueur.update()
 	pygame.display.update()
-	clock.tick(40)
+	clock.tick(50)
 	
 
